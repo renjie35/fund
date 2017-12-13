@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>苏州园区社保计算工具</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- 引入jquery -->
+	<script src="./js/jquery-3.2.1.min.js"></script>
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="./js/bootstrap.min.js"></script>
+	<!-- D3图形js-->
+	<script src="./js/echarts.common.min.js"></script>
+
+	<!-- 内部文件 -->
+	<link rel="stylesheet" href="./css/demo.css">
+	<script src="./js/demo.js"></script>
+</head>
+<body>
+<div class="container-fluid demo-body">
+	<div id="main">
+		<form>
+			<div class="row form-group">
+				<div class="col-xs-12">
+					<h3 class="center-block">苏州园区社保计算工具</h3>
+				</div>
+			</div>
+			<div class="row form-group">
+				<div class="col-xs-12">
+					<label>税前工资:</label>
+					<div class="input-group">
+						<input name="cash" class="form-control" placeholder="人民币">
+						<div class="input-group-addon">&yen;</div>
+					</div>
+				</div>
+			</div>
+			<div class="row form-group">
+				<div class="col-xs-12">
+					<label>住房公积金缴纳比例:</label>
+					<div class="input-group">
+						<input name="percent" class="form-control" placeholder="百分比" maxlength="3">
+						<div class="input-group-addon">%</div>
+					</div>
+				</div>
+			</div>
+			<div class="row form-group">
+				<div class="col-xs-12">
+					<label>类型:</label>
+					<select name="type" class="form-control">
+						<option value="0">--请选择--</option>
+						<option value="1">甲类</option>
+						<option value="2">乙类</option>
+					</select>
+				</div>
+			</div>
+			<div class="row form-group">
+				<div class="col-xs-6">
+					<label>单位行业:</label>
+					<select name="industry" class="form-control">
+						<option value="0">--请选择--</option>
+						<option value="1">IT服务/网络/电信/通讯</option>
+						<option value="2">电子/半导体制造</option>
+						<option value="3">银行/基金</option>
+						<option value="4">进出口/贸易</option>
+						<option value="5">快速消费品(食品/饮料/化妆品)</option>
+						<option value="6">机械/机电</option>
+						<option value="7">轻工/家电/家具</option>
+						<option value="8">服装/纺织</option>
+						<option value="9">信息/咨询</option>
+						<option value="10">生物/制药/保健/医药</option>
+						<option value="11">建筑/装饰/装潢</option>
+						<option value="12">酒店/餐饮</option>
+						<option value="13">科教/文化</option>
+						<option value="14">媒体/出版</option>
+						<option value="15">印刷/包装</option>
+						<option value="16">采掘业/冶炼</option>
+						<option value="17">娱乐/体育/健身/文艺</option>
+						<option value="18">法律公证</option>
+						<option value="19">化工/能源/造纸</option>
+						<option value="20">交通/运输/仓储/货代</option>
+						<option value="21">批发和零售</option>
+						<option value="22">幼儿及中小学校</option>
+						<option value="23">学术/科研/培训</option>
+						<option value="24">中介/专业服务</option>
+						<option value="25">非盈利机构/政府</option>
+						<option value="26">农、林、渔业</option>
+						<option value="27">其他</option>
+						<option value="28">广告/会展业</option>
+						<option value="29">房产开发</option>
+						<option value="30">社区服务业</option>
+						<option value="31">软件业</option>
+						<option value="32">集成电路开发与设计</option>
+						<option value="33">保险/投资</option>
+						<option value="34">材料/钢铁</option>
+						<option value="35">物业管理</option>
+						<option value="36">旅游观光</option>
+					</select>
+				</div>
+				<div class="col-xs-6">
+					<label>职能:</label>
+					<select name="func" class="form-control">
+						<option value="0">--请选择--</option>
+						<option value="1">计算机/互联网/通信/电子</option>
+						<option value="2">销售/客服/技术支持</option>
+						<option value="3">会计/金融/银行/保险</option>
+						<option value="4">生产/运营/采购/物流</option>
+						<option value="5">生物/制药/医疗/护理</option>
+						<option value="6">广告/市场/媒体/艺术</option>
+						<option value="7">建筑/房地产</option>
+						<option value="8">人事/行政/高级管理</option>
+						<option value="9">咨询/法律/教育/科研</option>
+						<option value="10">服务业</option>
+						<option value="11">公务员/翻译/其他</option>
+					</select>
+				</div>
+			</div>
+		</form>
+		<div class="row form-group">
+			<div class="col-xs-12">
+				<button type="button" class="btn btn-primary btn-lg center-block" onclick="init_ctl.calc()">计算</button>
+			</div>
+		</div>
+	</div>
+	<div id="result" style="display: none;">
+		<div class="row">
+			<label>基础信息</label>
+			<table class="table table-hover table-condensed">
+				<tr>
+					<td>
+						税前工资:
+					</td>
+					<td id="cash">
+
+					</td>
+				</tr>
+				<tr>
+					<td>
+						住房公积金缴纳比例:
+					</td>
+					<td id="percent">
+
+					</td>
+				</tr>
+				<tr>
+					<td>
+						个人所得税
+					</td>
+					<td id="person_tax">
+
+					</td>
+				</tr>
+				<tr>
+					<td>
+						个人缴纳公积金
+					</td>
+					<td id="person_house_fund">
+
+					</td>
+				</tr>
+				<tr>
+					<td>
+						实发工资
+					</td>
+					<td id="person_result_cash">
+
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+					</td>
+				</tr>
+			</table>
+			<div id="basic" style="width: 400px; height:400px;">
+			</div>
+		</div>
+		<div class="row">
+			<label>公积金分解</label>
+		</div>
+		<div class="row">
+			<div class="col-xs-6">
+				<label>个人部分</label>
+				<table class="table table-hover table-condensed">
+				<tr>
+					<td>
+						养老:
+					</td>
+					<td id="person_pension">
+
+					</td>
+				</tr>
+				<tr>
+					<td>
+						医疗:
+					</td>
+					<td id="person_care">
+
+					</td>
+				</tr>
+				<tr>
+					<td>
+						住房:
+					</td>
+					<td id="person_house">
+
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+					</td>
+				</tr>
+			</table>
+			</div>
+			<div class="col-xs-6">
+				<label>企业部分</label>
+				<table class="table table-hover table-condensed">
+					<tr>
+						<td>
+							养老:
+						</td>
+						<td id="company_pension">
+
+						</td>
+					</tr>
+					<tr>
+						<td>
+							医疗:
+						</td>
+						<td id="company_care">
+
+						</td>
+					</tr>
+					<tr>
+						<td>
+							住房:
+						</td>
+						<td id="company_house">
+
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<div class="row">
+			<label>统计排名</label>
+			<table class="table table-hover table-condensed">
+				<tr>
+					<td>
+						您的薪资水平在当前职能计算值中排名
+					</td>
+					<td id="about_cash">
+					</td>
+				</tr>
+				<tr>
+					<td>
+						您所在行业的整体薪资计算值相比其他行业
+					</td>
+					<td id="about_industry">
+					</td>
+				</tr>
+				<tr>
+					<td>
+						今年整体薪资计算值比去年
+					</td>
+					<td id="about_year">
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						不满意？现在找找和您匹配的职位吧
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="alert">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">消息提示</h4>
+			</div>
+			<div class="modal-body" id="alertMessage">
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+</body>
+</html>
